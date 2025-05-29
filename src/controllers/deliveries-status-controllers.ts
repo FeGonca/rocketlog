@@ -10,7 +10,7 @@ class DeliveriesStatusController {
     });
 
     const bodySchema = z.object({
-      status: z.enum(['processing', 'shipped', 'delivered']),
+      status: z.enum(['progressing', 'shipped', 'delivered']),
     });
 
     const { id } = paramsSchema.parse(request.params);
