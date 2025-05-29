@@ -31,6 +31,31 @@ class DeliveryLogsController {
     });
     return response.status(201).json();
   }
+
+  async show(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      delivery_id: z.string().uuid(),
+    });
+
+    const { delivery_id } = paramsSchema.parse(request.params);
+
+    const delevery = await prisma.delivery.findUnique({
+      where: { id: delivery_id },
+      include: {
+        user: true,
+        logs: true,
+      },
+    });
+
+    if (
+      request.user?.role === 'customer' &&
+      request.user.id !== delevery?.userId
+    ) {
+      throw new AppError('The user con only view their deliveries', 401);
+    }
+
+    return response.json(delevery);
+  }
 }
 
 export { DeliveryLogsController };
